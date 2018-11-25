@@ -1,13 +1,27 @@
 const createProject = (project) => {
-    return (dispatch, getState) => {
-        // make async call to DB
-
-        // Then dispatch (continue wwit dispatch)
-        dispatch({
-            type: 'CREATE_PROJECT',
-            project: project
-        });
-    }
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    // make async call to DB
+    const firestore = getFirestore();
+    firestore.collection('projects').add({
+      ...project,
+      authorFirstName: 'Net',
+      authorLastName: 'Ninja',
+      authorId: 12345,
+      createdAt: new Date()
+    }).then(() => {
+      // Then dispatch (continue wwit dispatch)
+      dispatch({
+        type: 'CREATE_PROJECT',
+        project: project
+      });
+    }).catch((err) => {
+      dispatch({
+        type: 'CREATE_PROJECT_ERROR',
+        err: err
+      });
+    });
+    
+  }
 }
 
 export default createProject;
